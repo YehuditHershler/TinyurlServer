@@ -18,8 +18,8 @@ app.use(bodyParser.json());
 const port = 3000
 
 app.use('/users', UsersRouter);
-app.use(':userId/links', LinksRouter);
-app.use('/:id', LinksController.redirect);
+app.use('/:userId/links', LinksRouter);
+app.use('/l/:id', LinksController.redirect);
 
 app.listen(port, () => {
     console.log(`Example app listening on http://localhost:${port}`)

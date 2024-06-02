@@ -20,8 +20,6 @@ const LinksController = {
 
   add: async (req, res) => {
     const userId = req.params.userId;
-    // const originalUrl = req.body;
-    // const originalUrl = req.body.originalUrl;
     // const targetValues = req.body.targetValues;
   
     try {
@@ -30,8 +28,8 @@ const LinksController = {
         return res.status(404).send('User not found');
       }      
       try {
-        const newLink = await LinkModel.create(req.body);//הוספת חדש
-        res.json(`http://localhost:3000/${newLink._id}`);
+        const newLink = await LinkModel.create(req.body.originalUrl);//הוספת חדש
+        res.json(`http://localhost:3000/l/${newLink._id}`);
         user.links.push(link);
         await user.save();
     
@@ -71,7 +69,19 @@ const LinksController = {
   redirect: async (req, res) => {
     try {
       const link = await LinkModel.findById(req.params.id);
+
+      if (!link) {
+        return res.status(404).send('Link not found');
+      }
+
       if (link) {
+        link.clicks.push({
+          insertedAt: new Date(),
+          ipAddress: req.ip,
+        });
+    
+        await link.save();
+
         res.redirect(302, link.originalUrl);
       } else {
         res.status(404).send('Link not found');
